@@ -40,8 +40,19 @@ export const LOCALIZACAO = {
 /* Planta do loteamento: coloque o endereço da imagem, ou deixe "" */
 export const PLANTA = "";
 
-/* Galeria de fotos: { src: "url-da-foto", legenda: "texto" } */
-export const GALERIA: { src: string; legenda: string }[] = [];
+/* Fotos locais em public/galeria; adicione um objeto por arquivo. A legenda é opcional. */
+export const GALERIA: { src: string; legenda?: string }[] = [
+  { src: "/galeria/lote1.jpg" },
+  { src: "/galeria/lote2.jpg" },
+  { src: "/galeria/lote3.jpg" },
+  { src: "/galeria/lote4.jpg" },
+];
+
+/* Informe a URL completa do perfil do Instagram, ou deixe "" até configurá-la. */
+export const INSTAGRAM_URL = "";
+
+/* Logo do cabeçalho: coloque o arquivo em public/images e informe, por exemplo, "/images/logo.png". */
+export const LOGO_URL = "";
 
 export type StatusLote = "disponivel" | "reservado" | "vendido";
 

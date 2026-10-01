@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { Instagram } from "lucide-react";
 
-import heroImg from "@/assets/hero-loteamento.jpg";
 import { Mapa, linkAbrirNoGoogleMaps } from "@/components/site/Mapa";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   CONFIG,
   GALERIA,
+  INSTAGRAM_URL,
   LOCALIZACAO,
+  LOGO_URL,
   LOTES,
-  PLANTA,
   ROTULO_STATUS,
   formatarValor,
   linkWhatsapp,
@@ -90,6 +92,7 @@ function Secao({
 function Index() {
   const [filtro, setFiltro] = useState<"todos" | StatusLote>("todos");
   const [busca, setBusca] = useState("");
+  const [fotoSelecionada, setFotoSelecionada] = useState<(typeof GALERIA)[number] | null>(null);
 
   const disponiveis = LOTES.filter((l) => l.status === "disponivel").length;
   const valorMinimo = useMemo(() => {
@@ -113,14 +116,22 @@ function Index() {
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-4">
           <a href="#inicio" className="flex flex-col leading-tight">
-            <span className="font-display text-lg font-semibold">{CONFIG.nomeSite}</span>
+            {LOGO_URL ? (
+              <img
+                src={LOGO_URL}
+                alt={CONFIG.nomeSite}
+                className="h-10 w-32 object-contain object-left"
+              />
+            ) : (
+              <span className="font-display text-lg font-semibold">{CONFIG.nomeSite}</span>
+            )}
             <span className="text-xs text-muted-foreground">{CONFIG.slogan}</span>
           </a>
           <nav className="hidden gap-6 text-sm text-muted-foreground md:flex">
             <a className="hover:text-foreground" href="#conceito">Conceito</a>
             <a className="hover:text-foreground" href="#lotes">Lotes</a>
-            <a className="hover:text-foreground" href="#planta">Planta</a>
             <a className="hover:text-foreground" href="#galeria">Galeria</a>
+            <a className="hover:text-foreground" href="#instagram">Instagram</a>
             <a className="hover:text-foreground" href="#localizacao">Localização</a>
             <a className="hover:text-foreground" href="#contato">Contato</a>
           </nav>
@@ -138,7 +149,7 @@ function Index() {
       {/* Hero */}
       <section id="inicio" className="relative overflow-hidden">
         <img
-          src={heroImg}
+          src="/galeria/lote1.jpg"
           alt="Vista aérea do loteamento"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -328,39 +339,105 @@ function Index() {
         <p className="mt-8 text-xs text-muted-foreground">{CONFIG.avisoValores}</p>
       </Secao>
 
-      {/* Planta */}
-      <Secao id="planta" numero="03" selo="Mapa do loteamento" titulo="Planta do loteamento">
-        {PLANTA ? (
-          <img
-            src={PLANTA}
-            alt="Planta do loteamento"
-            className="w-full rounded-2xl border border-border"
-          />
-        ) : (
-          <div className="flex min-h-56 items-center justify-center rounded-2xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
-            Adicione aqui a planta do loteamento.
-          </div>
-        )}
-      </Secao>
-
       {/* Galeria */}
-      <Secao id="galeria" numero="04" selo="Fotos" titulo="Galeria" areia>
+      <Secao id="galeria" numero="03" selo="Fotos" titulo="Galeria" areia>
         {GALERIA.length ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {GALERIA.map((foto) => (
               <figure key={foto.src} className="overflow-hidden rounded-2xl border border-border">
-                <img src={foto.src} alt={foto.legenda} className="h-56 w-full object-cover" />
-                <figcaption className="bg-card p-3 text-sm text-muted-foreground">
-                  {foto.legenda}
-                </figcaption>
+                <button
+                  type="button"
+                  onClick={() => setFotoSelecionada(foto)}
+                  aria-label={`Ampliar foto: ${foto.legenda || "Foto do empreendimento"}`}
+                  className="block w-full cursor-zoom-in overflow-hidden"
+                >
+                  <img
+                    src={foto.src}
+                    alt={foto.legenda || "Foto do empreendimento"}
+                    className="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                </button>
+                {foto.legenda ? (
+                  <figcaption className="bg-card p-3 text-sm text-muted-foreground">
+                    {foto.legenda}
+                  </figcaption>
+                ) : null}
               </figure>
             ))}
           </div>
         ) : (
           <div className="flex min-h-40 items-center justify-center rounded-2xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
-            Adicione aqui as fotos do empreendimento.
+            Coloque as fotos em public/galeria e cadastre os arquivos na lista GALERIA.
           </div>
         )}
+      </Secao>
+
+      <Dialog
+        open={fotoSelecionada !== null}
+        onOpenChange={(aberto) => {
+          if (!aberto) setFotoSelecionada(null);
+        }}
+      >
+        <DialogContent className="max-h-[90vh] max-w-5xl border-border bg-background p-3 sm:p-5">
+          <DialogTitle className="sr-only">
+            {fotoSelecionada?.legenda || "Foto do empreendimento"}
+          </DialogTitle>
+          {fotoSelecionada ? (
+            <figure>
+              <img
+                src={fotoSelecionada.src}
+                alt={fotoSelecionada.legenda || "Foto do empreendimento"}
+                className="max-h-[75vh] w-full rounded-lg object-contain"
+              />
+              {fotoSelecionada.legenda ? (
+                <figcaption className="pt-3 text-sm text-muted-foreground">
+                  {fotoSelecionada.legenda}
+                </figcaption>
+              ) : null}
+            </figure>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      <Secao
+        id="instagram"
+        numero="04"
+        selo="Redes sociais"
+        titulo="Instagram"
+        sub="Acompanhe as novidades e conheça mais sobre o Verde Lar."
+      >
+        <div className="flex flex-col items-start gap-6 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="flex items-center gap-4">
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-primary">
+              <Instagram aria-hidden="true" className="size-7" />
+            </span>
+            <div>
+              <h3 className="font-display text-xl font-semibold">{CONFIG.nomeSite}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{CONFIG.slogan}</p>
+            </div>
+          </div>
+          {INSTAGRAM_URL ? (
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <Instagram aria-hidden="true" className="size-4" />
+              Seguir no Instagram
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full bg-primary/40 px-5 py-3 text-sm font-medium text-primary-foreground"
+              title="Configure INSTAGRAM_URL em src/config/dados.ts"
+            >
+              <Instagram aria-hidden="true" className="size-4" />
+              Seguir no Instagram
+            </button>
+          )}
+        </div>
       </Secao>
 
       {/* Localização */}
