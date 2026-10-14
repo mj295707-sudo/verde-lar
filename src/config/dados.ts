@@ -49,7 +49,7 @@ export const GALERIA: { src: string; legenda?: string }[] = [
 ];
 
 /* Informe a URL completa do perfil do Instagram, ou deixe "" até configurá-la. */
-export const INSTAGRAM_URL = "";
+export const INSTAGRAM_URL = "https://www.instagram.com/verde_lar01/";
 
 /* Logo do cabeçalho: coloque o arquivo em public/images e informe, por exemplo, "/images/logo.png". */
 export const LOGO_URL = "";
