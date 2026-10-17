@@ -7,18 +7,18 @@
 export const CONFIG = {
   nomeSite: "Verde Lar",
   slogan: "Lotes e loteamentos",
-  corretor: "Magno Costa",
+  corretor: "Warlesson",
   creci: "", // ex.: "CRECI-MG 00000"
   tituloPrincipal: "Seu espaço. Seu futuro. Seu lar.",
   descricao: "Encontre o lote ideal para começar a construir seus planos.",
   avisoValores: "Valores sujeitos à disponibilidade e condições de negociação.",
 
-  // WhatsApp: formato internacional, somente números (55 + DDD + número)
-  whatsapp: "5531983867541",
+  // WhatsApp: número internacional (55 + DDD + número); a URL remove caracteres de formatação.
+  whatsapp: "+55 31 8306-7886",
   mensagemWhatsapp:
-    "Olá, Magno! Vim pelo site de loteamento e gostaria de saber mais informações sobre os lotes.",
+    "Olá, Warlesson! Vim pelo site de loteamento e gostaria de saber mais informações sobre os lotes.",
   mensagemLote:
-    "Olá, Magno! Vim pelo site de loteamento e tenho interesse no Lote {numero}. Gostaria de receber mais informações.",
+    "Olá, Warlesson! Vim pelo site de loteamento e tenho interesse no Lote {numero}. Gostaria de receber mais informações.",
 };
 
 /* ============================================================
@@ -148,5 +148,6 @@ export function formatarValor(valor: number | null) {
 }
 
 export function linkWhatsapp(mensagem: string) {
-  return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensagem)}`;
+  const telefone = CONFIG.whatsapp.replace(/\D/g, "");
+  return `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
 }
